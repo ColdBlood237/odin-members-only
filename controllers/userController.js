@@ -63,3 +63,11 @@ exports.user_create_post = [
     }
   }),
 ];
+
+exports.user_login_get = asyncHandler((req, res, next) => {
+  res.render("log-in-form");
+});
+
+exports.user_login_post = asyncHandler((req, res, next) => {
+  res.send("NOT IMPLEMENTED YET: user login POST");
+});

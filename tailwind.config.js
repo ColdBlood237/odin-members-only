@@ -1,10 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  purge: {
-    content: ["./views/*.ejs"],
+  content: [
+    "./views/*.ejs",
+    "./src/**/*.{html,js}",
+    "./node_modules/flowbite/**/*.js",
+  ],
+  daisyui: {
+    themes: ["light", "dark", "cupcake"],
   },
-  theme: {
-    extend: {},
-  },
-  plugins: [require("daisyui"), require("@tailwindcss/forms")],
+  plugins: [
+    require("flowbite/plugin"),
+    require("daisyui"),
+    require("@tailwindcss/forms"),
+  ],
 };

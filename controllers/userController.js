@@ -92,3 +92,12 @@ exports.user_login_post = [
     failureMessage: true,
   }),
 ];
+
+exports.user_logout_get = asyncHandler((req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});

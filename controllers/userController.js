@@ -3,6 +3,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/user");
+const passport = require("passport");
 
 exports.user_create_get = asyncHandler(async (req, res, next) => {
   res.render("sign-up-form");
@@ -23,6 +24,13 @@ exports.user_create_post = [
     .withMessage("last name must be specified.")
     .isAlphanumeric()
     .withMessage("last name has non-alphanumeric characters."),
+  body("username")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Email must be specified.")
+    .isEmail()
+    .withMessage("Invalid email."),
   body("password")
     .trim()
     .isLength({ min: 1 })
@@ -40,7 +48,7 @@ exports.user_create_post = [
     let newUser = new User({
       first_name: req.body.first_name,
       last_name: req.body.last_name,
-      username: req.body.email,
+      username: req.body.username,
       membership_status: false,
     });
 
@@ -58,16 +66,29 @@ exports.user_create_post = [
         });
       } else {
         await newUser.save();
-        res.redirect("/");
+        req.login(newUser, function (err) {
+          if (err) {
+            return next(err);
+          }
+          return res.redirect("/");
+        });
       }
     }
   }),
 ];
 
 exports.user_login_get = asyncHandler((req, res, next) => {
-  res.render("log-in-form");
+  res.render("log-in-form", { errors: req.session.messages });
 });
 
-exports.user_login_post = asyncHandler((req, res, next) => {
-  res.send("NOT IMPLEMENTED YET: user login POST");
-});
+exports.user_login_post = [
+  function (req, res, next) {
+    req.session.messages = [];
+    next();
+  },
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/log-in",
+    failureMessage: true,
+  }),
+];

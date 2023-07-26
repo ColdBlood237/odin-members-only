@@ -5,7 +5,10 @@ const User = require("../models/user");
 const { body, validationResult } = require("express-validator");
 
 exports.index = asyncHandler(async (req, res, next) => {
-  const allMessages = await Message.find();
+  const allMessages = await Message.find()
+    .populate("sender")
+    .sort({ createdAt: -1 })
+    .exec();
   res.render("index", { user: req.user, messages: allMessages });
 });
 
@@ -29,7 +32,10 @@ exports.message_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      const allMessages = await Message.find();
+      const allMessages = await Message.find()
+        .populate("sender")
+        .sort({ createdAt: -1 })
+        .exec();
       res.render("index", {
         user: req.user,
         messages: allMessages,

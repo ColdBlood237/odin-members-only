@@ -114,7 +114,10 @@ exports.join_club_post = [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      const allMessages = await Message.find();
+      const allMessages = await Message.find()
+        .populate("sender")
+        .sort({ createdAt: -1 })
+        .exec();
       res.render("index", {
         user: req.user,
         messages: allMessages,

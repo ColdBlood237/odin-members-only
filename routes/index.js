@@ -17,4 +17,6 @@ router.post("/log-in", user_controller.user_login_post);
 
 router.get("/log-out", user_controller.user_logout_get);
 
+router.post("/new-message", message_controller.message_create_post);
+
 module.exports = router;

@@ -19,4 +19,6 @@ router.get("/log-out", user_controller.user_logout_get);
 
 router.post("/new-message", message_controller.message_create_post);
 
+router.post("/join-club", user_controller.join_club_post);
+
 module.exports = router;

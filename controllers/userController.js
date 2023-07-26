@@ -1,8 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
 
 const User = require("../models/user");
+const Message = require("../models/message");
 const passport = require("passport");
 
 exports.user_create_get = asyncHandler(async (req, res, next) => {
@@ -101,3 +103,26 @@ exports.user_logout_get = asyncHandler((req, res, next) => {
     res.redirect("/");
   });
 });
+
+exports.join_club_post = [
+  body("code", "Incorrect code.")
+    .trim()
+    .matches(process.env.CLUB_CODE)
+    .escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const allMessages = await Message.find();
+      res.render("index", {
+        user: req.user,
+        messages: allMessages,
+        errors: errors.array(),
+      });
+    } else {
+      await User.findByIdAndUpdate(req.user._id, { membership_status: true });
+      res.redirect("/");
+    }
+  }),
+];
